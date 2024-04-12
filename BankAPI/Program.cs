@@ -4,12 +4,18 @@ using BankApp.Data.Identity;
 using BankApp.Data.Interfaces;
 using BankApp.Data.Repos;
 using BankApp.Domain.Entities;
+using BankApp.Domain.Profiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+// automapper profiles (Kom ihåg att sätta public på profilerna)
+builder.Services.AddAutoMapper(
+    typeof(CustomerProfile)
+    );
 
 // adding swagger stuff.
 builder.Services.AddSwaggerGen();
@@ -20,11 +26,16 @@ builder.Services.AddDbContext<BankAppDataContext>(opt =>
 
 // set up identity stuff
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<BankAppDataContext>()
-    .AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<BankAppDataContext>();
 
+// test stuff
 builder.Services.AddScoped<ITestService, TestService>();
 builder.Services.AddScoped<ITestRepo, TestRepo>();
+
+// real stuff
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 var app = builder.Build();
 
@@ -32,6 +43,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 

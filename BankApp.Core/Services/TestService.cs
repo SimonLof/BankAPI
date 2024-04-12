@@ -1,4 +1,5 @@
 ﻿using BankApp.Core.Interfaces;
+using BankApp.Data.Identity;
 using BankApp.Data.Interfaces;
 using BankApp.Domain.Entities;
 
@@ -16,6 +17,11 @@ namespace BankApp.Core.Services
         public async Task<Account> GetFirstAccount()
         {
             return await _repo.GetFirstAccount();
+        }
+
+        public async Task<List<ApplicationUser>> GetAllUsers()
+        {
+            return await _repo.GetAllUsers();
         }
     }
 }

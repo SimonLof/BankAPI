@@ -5,6 +5,6 @@ namespace BankApp.Data.Identity
 {
     public class ApplicationUser : IdentityUser
     {
-        public virtual Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
     }
 }
