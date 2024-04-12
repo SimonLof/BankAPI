@@ -8,7 +8,7 @@ namespace BankApp.Domain.Profiles
     {
         public CustomerProfile()
         {
-            CreateMap<UserCreateModel, Customer>()
+            CreateMap<UserCreate, Customer>()
                 .ForMember(dest => dest.Emailaddress, opt =>
                 opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Telephonenumber, opt =>

@@ -1,5 +1,11 @@
 ﻿namespace BankApp.Domain.Entities;
 
+public enum AccountTypeEnum
+{
+    StandardTransactionAccount = 1,
+    SavingsAccount = 2,
+}
+
 public partial class AccountType
 {
     public int AccountTypeId { get; set; }

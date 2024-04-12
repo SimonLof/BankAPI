@@ -14,7 +14,10 @@ builder.Services.AddControllers();
 
 // automapper profiles (Kom ihåg att sätta public på profilerna)
 builder.Services.AddAutoMapper(
-    typeof(CustomerProfile)
+    typeof(CustomerProfile),
+    typeof(AccountProfile),
+    typeof(DispositionProfile),
+    typeof(TransactionProfile)
     );
 
 // adding swagger stuff.
@@ -36,6 +39,8 @@ builder.Services.AddScoped<ITestRepo, TestRepo>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IAccountRepo, AccountRepo>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 var app = builder.Build();
 

@@ -29,10 +29,24 @@ namespace BankApp.API.Controllers
         [HttpGet("/whoami")]
         public async Task<IActionResult> WhoAmI()
         {
-            // TODO gör en loop, och skapa ett anonymt objekt som innehåller alla claims och username. Kanske userID också.
-            return Ok(User.Claims.FirstOrDefault());
+            var returnobject = new
+            {
+                ClaimsList = new List<string>(),
+                UserIdentity = User.Identity.Name,
+            };
+            foreach (var item in User.Claims)
+            {
+                returnobject.ClaimsList.Add(
+                    item.ToString() + " " +
+                    item.Value.ToString() + " " +
+                    item.ValueType.ToString());
+            }
+
+
+            return Ok(returnobject);
         }
 
+        [AllowAnonymous]
         [HttpGet("/getallusers")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -42,38 +56,45 @@ namespace BankApp.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return BadRequest(new { Error = e.Message });
             }
         }
 
         [HttpPost("/newcustomer")]
-        public async Task<IActionResult> CreateCustomer(UserCreateModel newUser)
+        public async Task<IActionResult> CreateCustomer(UserCreate newUser)
         {
-            //try
-            //{
-            if (newUser == null) return BadRequest();
+            try
+            {
+                if (newUser == null) return BadRequest();
 
-            var result = await _userService.CreateCustomer(newUser);
+                var result = await _userService.CreateCustomer(newUser);
 
-            if (result.Succeeded)
-                return Ok();
-            //}
-            //catch (Exception e)
-            //{
-            //    return BadRequest(e);
-            //}
+                if (result.Succeeded)
+                    return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
 
             return BadRequest("what");
         }
         [AllowAnonymous]
         [HttpPost("/createadmin")]
-        public async Task<IActionResult> CreateAdmin(UserCreateModel newAdmin)
+        public async Task<IActionResult> CreateAdmin(UserCreate newAdmin)
         {
-            var res = await _userService.CreateAdmin(newAdmin);
-            if (res.Succeeded)
-                return Ok(res);
+            try
+            {
+                var res = await _userService.CreateAdmin(newAdmin);
+                if (res.Succeeded)
+                    return Ok(res);
 
-            return BadRequest();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
         }
     }
 }

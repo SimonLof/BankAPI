@@ -8,14 +8,13 @@ namespace BankApp.Core.Services
     public class LoginService : ILoginService
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public LoginService(SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
         }
 
-        public async Task Login(UserLoginModel loginDTO)
+        public async Task Login(UserLogin loginDTO)
         {
             var result = await _signInManager
                 .PasswordSignInAsync(loginDTO.UserName, loginDTO.Password, false, false);

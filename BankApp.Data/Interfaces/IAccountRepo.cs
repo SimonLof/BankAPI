@@ -7,5 +7,6 @@ namespace BankApp.Data.Interfaces
         Task<Account> CreateAccount(Account newAccount);
         Task<Disposition> CreateDisposition(Disposition disposition);
         Task<Account> GetAsync(int id);
+        Task<List<Account>> GetUserAccounts(int customerId);
     }
 }

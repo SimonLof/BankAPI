@@ -5,7 +5,7 @@ namespace BankApp.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<IdentityResult> CreateAdmin(UserCreateModel user);
-        Task<IdentityResult> CreateCustomer(UserCreateModel user);
+        Task<IdentityResult> CreateAdmin(UserCreate user);
+        Task<IdentityResult> CreateCustomer(UserCreate user);
     }
 }

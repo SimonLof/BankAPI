@@ -21,6 +21,8 @@ namespace BankApp.Data.Repos
 
         public async Task<Account> CreateAccount(Account newAccount)
         {
+            newAccount.AccountTypes = await _context.AccountTypes
+                .FirstOrDefaultAsync(at => at.AccountTypeId == newAccount.AccountTypesId);
             await _context.Accounts.AddAsync(newAccount);
             await _context.SaveChangesAsync();
             return newAccount;
@@ -37,6 +39,16 @@ namespace BankApp.Data.Repos
             await _context.Dispositions.AddAsync(disposition);
             await _context.SaveChangesAsync();
             return disposition;
+        }
+
+        public async Task<List<Account>> GetUserAccounts(int customerId)
+        {
+            var accountList = await _context.Dispositions
+                .Where(d => d.CustomerId == customerId)
+                .Select(d => d.Account).ToListAsync();
+            if (accountList.Count == 0) { return new List<Account>(); }
+
+            return accountList;
         }
     }
 }

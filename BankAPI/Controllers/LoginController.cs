@@ -16,14 +16,21 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("/login")]
-        public async Task<IActionResult> Login(UserLoginModel userLogin)
+        public async Task<IActionResult> Login(UserLogin userLogin)
         {
-            if (userLogin == null)
-                return BadRequest();
+            try
+            {
+                if (userLogin is null)
+                    return BadRequest();
 
-            await _loginService.Login(userLogin);
+                await _loginService.Login(userLogin);
 
-            return Ok("You are logged in!");
+                return Ok("You are logged in!");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
         }
 
         [HttpGet("/logout")]
@@ -39,7 +46,7 @@ namespace BankApp.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new { Error = e.Message });
             }
 
             return BadRequest();

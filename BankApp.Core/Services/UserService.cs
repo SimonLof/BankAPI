@@ -13,15 +13,17 @@ namespace BankApp.Core.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepo _userRepo;
         private readonly IMapper _mapper;
+        private readonly IAccountService _accountService;
 
-        public UserService(UserManager<ApplicationUser> userManager, IUserRepo userRepo, IMapper mapper)
+        public UserService(UserManager<ApplicationUser> userManager, IUserRepo userRepo, IMapper mapper, IAccountService accountService)
         {
             _userManager = userManager;
             _userRepo = userRepo;
             _mapper = mapper;
+            _accountService = accountService;
         }
 
-        public async Task<IdentityResult> CreateCustomer(UserCreateModel user)
+        public async Task<IdentityResult> CreateCustomer(UserCreate user)
         {
             var result = await _userManager.CreateAsync(new ApplicationUser
             {
@@ -39,20 +41,35 @@ namespace BankApp.Core.Services
 
                 var newCustomer = _mapper.Map<Customer>(user);
 
-                // TODO fixa den här skiten. ny customer behöver _massa_ skit.
                 await _userRepo.AddNewCustomer(newCustomer);
                 currentUser.Customer = newCustomer;
 
                 var updateResult = await _userManager.UpdateAsync(currentUser);
+
+                if (updateResult.Succeeded)
+                {
+                    var newAccount = new AccountCreate
+                    {
+                        AccountTypesId = AccountTypeEnum.StandardTransactionAccount,
+                        Balance = 0,
+                        CustomerId = newCustomer.CustomerId,
+                        DispositionType = "OWNER",
+                        Frequency = "Monthly"
+                    };
+                    await _accountService.CreateAccount(newAccount);
+                }
+
+
                 if (updateResult.Succeeded)
                     return roleResult;
+                else throw new Exception(updateResult.Errors.First().Description);
             }
-            else throw new Exception(result.Errors.First().Description);
 
-            throw new Exception("Something went wrong.");
+
+            throw new Exception(result.Errors.First().Description);
         }
 
-        public async Task<IdentityResult> CreateAdmin(UserCreateModel user)
+        public async Task<IdentityResult> CreateAdmin(UserCreate user)
         {
             var result = await _userManager.CreateAsync(new ApplicationUser
             {

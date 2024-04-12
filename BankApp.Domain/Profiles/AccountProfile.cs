@@ -8,7 +8,19 @@ namespace BankApp.Domain.Profiles
     {
         public AccountProfile()
         {
-            CreateMap<AccountCreateModel, Account>();
+            CreateMap<AccountCreate, Account>()
+                .ForMember(dest => dest.AccountTypesId, opt =>
+                opt.MapFrom(src => (int)src.AccountTypesId));
+
+            CreateMap<Account, AccountSimpleView>()
+                .ForMember(dest => dest.AccountType, opt =>
+                opt.MapFrom(src => src.AccountTypesId == 1 ? "Standard transaction account" : "Savings account"));
+
+            CreateMap<Account, AccountDetailedView>()
+                .ForMember(dest => dest.AccountType, opt =>
+                opt.MapFrom(src => src.AccountTypesId == 1 ? "Standard transaction account" : "Savings account"));
         }
     }
 }
+
+

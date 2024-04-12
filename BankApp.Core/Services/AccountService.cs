@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using BankApp.Core.Interfaces;
+using BankApp.Data.Identity;
 using BankApp.Data.Interfaces;
 using BankApp.Domain.DTO;
 using BankApp.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BankApp.Core.Services
 {
@@ -10,14 +14,16 @@ namespace BankApp.Core.Services
     {
         private readonly IMapper _mapper;
         private readonly IAccountRepo _accountRepo;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountService(IAccountRepo accountRepo, IMapper mapper)
+        public AccountService(IAccountRepo accountRepo, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _accountRepo = accountRepo;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public async Task CreateAccount(AccountCreateModel accountCreateModel)
+        public async Task CreateAccount(AccountCreate accountCreateModel)
         {
             var newAccount = _mapper.Map<Account>(accountCreateModel);
             newAccount.Created = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -26,7 +32,48 @@ namespace BankApp.Core.Services
 
             var newAccountDisposition = _mapper.Map<Disposition>(accountCreateModel);
             newAccountDisposition.AccountId = accountWithId.AccountId;
+
             await _accountRepo.CreateDisposition(newAccountDisposition);
+        }
+
+        public async Task UserCreateAccount(AccountCreateCustomer accountCreateModel, string username)
+        {
+            if (username.IsNullOrEmpty()) throw new Exception("Invalid username.");
+
+            var user = await _userManager.Users
+                   .Include(a => a.Customer)
+                   .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper())
+                   ?? throw new Exception("User not found.");
+
+            var newCustomerCreatedAccount = new AccountCreate
+            {
+                CustomerId = user.Customer.CustomerId,
+                AccountTypesId =
+                    accountCreateModel.AccountType is 't' or 'T' ?
+                        AccountTypeEnum.StandardTransactionAccount :
+                        accountCreateModel.AccountType is 's' or 'S' ?
+                            AccountTypeEnum.SavingsAccount :
+                                throw new Exception("Invalid account type"),
+                Balance = 0,
+                DispositionType = "DISPONENT",
+                Frequency = accountCreateModel.Frequency,
+            };
+            await CreateAccount(newCustomerCreatedAccount);
+        }
+
+        public async Task<List<AccountSimpleView>> GetAccounts(string username)
+        {
+            var user = await _userManager.Users
+                .Include(a => a.Customer)
+                .ThenInclude(c => c.Dispositions)
+                .ThenInclude(d => d.Account)
+                .FirstOrDefaultAsync(a => a.UserName == username);
+            var customerAccounts = user.Customer.Dispositions.Select(d => d.Account).ToList();
+            List<AccountSimpleView> returnAccounts = [];
+            foreach (var account in customerAccounts)
+                returnAccounts.Add(_mapper.Map<AccountSimpleView>(account));
+
+            return returnAccounts;
         }
     }
 }

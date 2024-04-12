@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Domain.DTO
 {
-    public class UserCreateModel
+    public class UserCreate
     {
         public string UserName { get; set; } = null!;
         public string Password { get; set; } = null!;
