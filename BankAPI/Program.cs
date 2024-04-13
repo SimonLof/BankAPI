@@ -1,3 +1,4 @@
+using BankApp.API.Extensions;
 using BankApp.Core.Interfaces;
 using BankApp.Core.Services;
 using BankApp.Data.Identity;
@@ -17,11 +18,13 @@ builder.Services.AddAutoMapper(
     typeof(CustomerProfile),
     typeof(AccountProfile),
     typeof(DispositionProfile),
-    typeof(TransactionProfile)
+    typeof(TransactionProfile),
+    typeof(LoanProfile)
     );
 
 // adding swagger stuff.
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerExtended();
+
 
 // dbcontext setup.
 builder.Services.AddDbContext<BankAppDataContext>(opt =>
@@ -29,7 +32,9 @@ builder.Services.AddDbContext<BankAppDataContext>(opt =>
 
 // set up identity stuff
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<BankAppDataContext>();
+    .AddEntityFrameworkStores<BankAppDataContext>()
+    .AddDefaultTokenProviders();
+
 
 // test stuff
 builder.Services.AddScoped<ITestService, TestService>();
@@ -41,11 +46,17 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ILoanRepo, LoanRepo>();
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<ITransactionRepo, TransactionRepo>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+// cookie stuff
+builder.Services.AddCookieExtended();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerExtensions();
 
 app.UseRouting();
 

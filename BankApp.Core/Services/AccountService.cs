@@ -61,19 +61,44 @@ namespace BankApp.Core.Services
             await CreateAccount(newCustomerCreatedAccount);
         }
 
-        public async Task<List<AccountSimpleView>> GetAccounts(string username)
+        public async Task<List<AccountSimpleView>> GetAccountsFromName(string username)
         {
             var user = await _userManager.Users
                 .Include(a => a.Customer)
                 .ThenInclude(c => c.Dispositions)
                 .ThenInclude(d => d.Account)
-                .FirstOrDefaultAsync(a => a.UserName == username);
+                .FirstOrDefaultAsync(a => a.UserName == username) ??
+                throw new Exception("Username not found.");
+
+            if (user.Customer is null) throw new Exception("User is not a customer.");
+
             var customerAccounts = user.Customer.Dispositions.Select(d => d.Account).ToList();
             List<AccountSimpleView> returnAccounts = [];
             foreach (var account in customerAccounts)
                 returnAccounts.Add(_mapper.Map<AccountSimpleView>(account));
 
             return returnAccounts;
+        }
+
+        public async Task<Account> GetAccountFromId(int id)
+        {
+            return await _accountRepo.GetAccount(id);
+        }
+
+        public async Task<AccountDetailedView> CustomerGetAcountWithTransactions(int id, string username)
+        {
+            var user = await _userManager.Users
+                        .Include(a => a.Customer)
+                        .ThenInclude(c => c.Dispositions)
+                        .ThenInclude(d => d.Account)
+                        .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper());
+            var userAccountIds = user.Customer.Dispositions.Select(d => d.Account)
+                                                            .Select(a => a.AccountId).ToList();
+
+            if (!userAccountIds.Contains(id)) throw new Exception("Invalid account.");
+
+            var account = await _accountRepo.GetAccountWithTransactions(id);
+            return _mapper.Map<AccountDetailedView>(account);
         }
     }
 }

@@ -13,10 +13,17 @@ namespace BankApp.Data.Repos
             _context = context;
         }
 
-        public async Task<Account> GetAsync(int id)
+        public async Task<Account> GetAccount(int id)
         {
             return await _context.Accounts.FirstOrDefaultAsync(account => account.AccountId == id) ??
                 throw new Exception("Account not found.");
+        }
+
+        public async Task<Account> GetAccountWithTransactions(int id)
+        {
+            return await _context.Accounts.Include(a => a.Transactions)
+                .FirstOrDefaultAsync(account => account.AccountId == id) ??
+               throw new Exception("Account not found.");
         }
 
         public async Task<Account> CreateAccount(Account newAccount)

@@ -12,42 +12,49 @@ namespace BankApp.API.Controllers
     {
         private readonly ITestService _testService;
         private readonly IUserService _userService;
+        private readonly IAccountService _accountService;
+        private readonly ILoanService _loanService;
 
-        public AdminController(ITestService testService, IUserService userService)
+        public AdminController(ITestService testService,
+                               IUserService userService,
+                               IAccountService accountService,
+                               ILoanService loanService)
         {
             _testService = testService;
             _userService = userService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Testing()
-        {
-            return Ok(await _testService.GetFirstAccount());
+            _accountService = accountService;
+            _loanService = loanService;
         }
 
         [AllowAnonymous]
-        [HttpGet("/whoami")]
+        [HttpGet("whoami")]
         public async Task<IActionResult> WhoAmI()
         {
-            var returnobject = new
+            try
             {
-                ClaimsList = new List<string>(),
-                UserIdentity = User.Identity.Name,
-            };
-            foreach (var item in User.Claims)
-            {
-                returnobject.ClaimsList.Add(
-                    item.ToString() + " " +
-                    item.Value.ToString() + " " +
-                    item.ValueType.ToString());
+                var returnobject = new
+                {
+                    ClaimsList = new List<string>(),
+                    UserIdentity = User.Identity.Name,
+                };
+                foreach (var item in User.Claims)
+                {
+                    returnobject.ClaimsList.Add(
+                        item.ToString() + " " +
+                        item.Value.ToString() + " " +
+                        item.ValueType.ToString());
+                }
+
+                return Ok(returnobject);
             }
-
-
-            return Ok(returnobject);
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
         }
 
         [AllowAnonymous]
-        [HttpGet("/getallusers")]
+        [HttpGet("getallusers")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -60,7 +67,37 @@ namespace BankApp.API.Controllers
             }
         }
 
-        [HttpPost("/newcustomer")]
+        [HttpPost("newloan")]
+        public async Task<IActionResult> NewLoan(LoanCreate loan)
+        {
+            try
+            {
+                var newLoan = await _loanService.CreateNewLoan(loan);
+                return Ok(newLoan);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(new { Error = e.Message });
+            }
+        }
+
+        [HttpGet("customer/{name:alpha}")]
+        public async Task<IActionResult> GetCustomerAccounts(string name)
+        {
+            try
+            {
+                var result = await _accountService.GetAccountsFromName(name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
+        }
+
+
+        [HttpPost("newcustomer")]
         public async Task<IActionResult> CreateCustomer(UserCreate newUser)
         {
             try
@@ -71,16 +108,16 @@ namespace BankApp.API.Controllers
 
                 if (result.Succeeded)
                     return Ok();
+
+                return BadRequest(new { Error = result.Errors.First().Description });
             }
             catch (Exception e)
             {
                 return BadRequest(new { Error = e.Message });
             }
-
-            return BadRequest("what");
         }
         [AllowAnonymous]
-        [HttpPost("/createadmin")]
+        [HttpPost("createadmin")]
         public async Task<IActionResult> CreateAdmin(UserCreate newAdmin)
         {
             try
@@ -89,7 +126,7 @@ namespace BankApp.API.Controllers
                 if (res.Succeeded)
                     return Ok(res);
 
-                return BadRequest();
+                return BadRequest(new { Error = res.Errors.First().Description });
             }
             catch (Exception e)
             {

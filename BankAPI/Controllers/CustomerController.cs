@@ -11,13 +11,15 @@ namespace BankApp.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly ITransactionService _transactionService;
 
-        public CustomerController(IAccountService accountService)
+        public CustomerController(IAccountService accountService, ITransactionService transactionService)
         {
             _accountService = accountService;
+            _transactionService = transactionService;
         }
 
-        [HttpPost("/newaccount")]
+        [HttpPost("newaccount")]
         public async Task<IActionResult> OpenNewAccount(AccountCreateCustomer newAccount)
         {
             try
@@ -31,19 +33,53 @@ namespace BankApp.API.Controllers
             }
         }
 
-        [HttpGet("/myaccounts")]
+        [HttpGet("myaccounts")]
         public async Task<IActionResult> ShowMyAccounts()
         {
-            var result = await _accountService.GetAccounts(User.Identity.Name);
+            var result = await _accountService.GetAccountsFromName(User.Identity.Name);
             return Ok(result);
+        }
+
+        [HttpGet("account/{id}")]
+        public async Task<IActionResult> GetSingleAccount(int id)
+        {
+            try
+            {
+                var result = await _accountService.CustomerGetAcountWithTransactions(id, User.Identity.Name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
+        }
+
+        [HttpPost("depositOrWithdraw")]
+        public async Task<IActionResult> MakeTransaction(TransactionCreate transaction)
+        {
+            try
+            {
+                var result = await _transactionService.CustomerSingleTransaction(transaction, User.Identity.Name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
+        }
+
+        [HttpPost("transfer")]
+        public async Task<IActionResult> TransferMoney(TransactionBetweenAccountsCreate transaction)
+        {
+            try
+            {
+                var result = await _transactionService.TransferTransaction(transaction, User.Identity.Name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
         }
     }
 }
-
-
-//public string Frequency { get; set; } = null!;
-//public decimal Balance { get; set; }
-//public int CustomerId { get; set; }
-//// OWNER if main account. DISPONENT if extra added account.
-//public string DispositionType { get; set; } = null!;
-//public AccountTypeEnum? AccountTypesId { get; set; }

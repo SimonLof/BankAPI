@@ -15,7 +15,7 @@ namespace BankApp.API.Controllers
             _loginService = userService;
         }
 
-        [HttpPost("/login")]
+        [HttpPost]
         public async Task<IActionResult> Login(UserLogin userLogin)
         {
             try
@@ -33,7 +33,7 @@ namespace BankApp.API.Controllers
             }
         }
 
-        [HttpGet("/logout")]
+        [HttpGet("/api/logout")]
         public async Task<IActionResult> Logout()
         {
             try
@@ -43,13 +43,13 @@ namespace BankApp.API.Controllers
                     await _loginService.Logout();
                     return Ok();
                 }
+
+                return BadRequest();
             }
             catch (Exception e)
             {
                 return BadRequest(new { Error = e.Message });
             }
-
-            return BadRequest();
         }
     }
 }
