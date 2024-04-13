@@ -9,12 +9,12 @@
 
 #### `~/whoami` ❓
 
-> Lists all the currently signed in users claims. (For testing)
+> Lists all the claims for currently signed in user. (For testing)
 
 
 #### `~/getallusers`
 
-> Get all accounts created with Identity. (Not the 100 000 customers)
+> Get all accounts created with Identity. (Not the 100 000 customers, also for testing)
 
 
 #### `~/createadmin`
