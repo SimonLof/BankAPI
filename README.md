@@ -37,7 +37,7 @@
 >
 > `{ accountID:int, amount:double, duration:int }`
 >
->  Duration is the time period over which the loan will be payed off.
+>  Duration is the time period (in months) over which the loan will be payed off.
 
 
 #### `~/customer/{id}` 🔍
