@@ -1,13 +1,13 @@
-# BankAPI
+# BankAPI  💰
 
 > Fake BankAPI using EntityFramework Core, Identity, Swagger and Automapper, and a mock database with about 100 000 customers. (database not included in repo)
 
-## Endpoints
+## Endpoints  🔚
 
-### `/api/Admin`
+### `/api/Admin` 👮
 
 
-#### `~/whoami`
+#### `~/whoami` ❓
 
 > Lists all the currently signed in users claims. (For testing)
 
@@ -24,14 +24,14 @@
 >  `{userName:string, password:string, gender:string, givenname:string, surname:string, streetaddress:string, city:string, zipcode:string, country:string, countrycode:string, email:email-string, phoneNumber:string }`
 
 
-#### `~/newcustomer`
+#### `~/newcustomer` 🧒
 
 > Create a new customer. Creates an Identity-user for login, Customer for bank information, and a new Account associated with the customer.
 >
 >  `{userName:string, password:string, gender:string, givenname:string, surname:string, streetaddress:string, city:string, zipcode:string, country:string, countrycode:string, email:email-string, phoneNumber:string }`
 
 
-#### `~/newloan`
+#### `~/newloan` 💸
 
 > Creates a new loan for the given account, and the associated transaction.
 >
@@ -40,7 +40,7 @@
 >  Duration is the time period over which the loan will be payed off.
 
 
-#### `~/customer/{id}`
+#### `~/customer/{id}` 🔍
 
 > Get an overview list of given customers accounts.
 
@@ -48,12 +48,12 @@
 ### `/api/Customer`
 
 
-#### `~/myaccounts`
+#### `~/myaccounts` 🔍
 
 > Get an overview list of all the signed in users accounts.
 
 
-#### `~/newaccount`
+#### `~/newaccount` 🤑
 
 > Create a new account with the given parameters associated with the logged in customer.
 >
@@ -62,32 +62,32 @@
 > Frequency is "monthly" or "weekly". Type is "s" for savings account and "t" for transaction account.
 
 
-#### `~/account/{id}`
+#### `~/account/{id}` 🔎
 
 > Get detailed information about a specific account that the user owns. Lists all transactions for the given account.
 
 
- #### `~/depositOrWithdraw`
+ #### `~/depositOrWithdraw` ↪️
 
 > Add or remove funds from a given account that the customer owns.
 >
 >  `{ accountId:int, amount:double }`
 
 
-#### `~/transfer`
+#### `~/transfer` ➡️
 
 > Transfer funds from one of the signed in customers owned accounts to another account in the bank.
 >
 >  `{ fromAccountId:int, toAccountId:int, amount:double }`
 
 
-### `/api/Login`
+### `/api/Login` ✔️
 
 > Login with a username/password. Identity puts a cookie in the browser that auths the user until logging out or ending the session.
 >
 >  `{ userName:string, password:string }`
 
 
-### `/api/logout`
+### `/api/logout` ❎
 
 > Logs the user out. Removes the Identity-created cookie from the browser.
