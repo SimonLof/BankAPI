@@ -42,7 +42,7 @@
 
 #### `~/customer/{id}` 🔍
 
-> Get an overview list of given customers accounts.
+> Get an overview list of the given customers accounts.
 
 
 ### `/api/Customer`
@@ -50,7 +50,7 @@
 
 #### `~/myaccounts` 🔍
 
-> Get an overview list of all the signed in users accounts.
+> Get an overview list of all accounts for the signed in user.
 
 
 #### `~/newaccount` 🤑
