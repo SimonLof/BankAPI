@@ -88,6 +88,6 @@
 >  `{ userName:string, password:string }`
 
 
-### [Get] `/api/logout` ❎s
+### [Get] `/api/logout` 🚪
 
 > Logs the user out. Removes the Identity-created cookie from the browser.
