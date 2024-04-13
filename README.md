@@ -42,7 +42,7 @@
 
 #### `~/customer/{id}` 🔍
 
-> Get an overview list of the given customers accounts.
+> Get an overview list of the given customer's accounts.
 
 
 ### `/api/Customer`
@@ -76,7 +76,7 @@
 
 #### `~/transfer` ➡️
 
-> Transfer funds from one of the signed in customers owned accounts to another account in the bank.
+> Transfer funds from one of the signed in customer's owned accounts to another account in the bank.
 >
 >  `{ fromAccountId:int, toAccountId:int, amount:double }`
 
