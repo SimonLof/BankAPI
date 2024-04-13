@@ -1,6 +1,6 @@
 # BankAPI  💰
 
-> Fake BankAPI using EntityFramework Core, Identity, Swagger and Automapper, and a mock database with about 100 000 customers. (database not included in repo)
+ Fake BankAPI using EntityFramework Core, Identity, Swagger and Automapper, and a mock database with about 100 000 customers. (database not included in repo)
 
 ## Endpoints  🔚
 
