@@ -8,7 +8,7 @@ namespace BankApp.Core.Interfaces
         Task CreateAccount(AccountCreate accountCreateModel);
         Task<Account> GetAccountFromId(int id);
         Task<List<AccountSimpleView>> GetAccountsFromName(string username);
-        Task<AccountDetailedView> CustomerGetAcountWithTransactions(int id, string username);
+        Task<AccountDetailedView> CustomerGetAccountWithTransactions(int id, string username);
         Task UserCreateAccount(AccountCreateCustomer accountCreateModel, string username);
     }
 }

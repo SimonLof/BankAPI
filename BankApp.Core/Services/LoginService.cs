@@ -14,14 +14,14 @@ namespace BankApp.Core.Services
             _signInManager = signInManager;
         }
 
-        public async Task Login(UserLogin loginDTO)
+        public async Task<bool> Login(UserLogin loginDTO)
         {
             var result = await _signInManager
                 .PasswordSignInAsync(loginDTO.UserName, loginDTO.Password, false, false);
 
-            if (result.Succeeded) return;
+            if (result.Succeeded) return true;
 
-            throw new Exception("Login Failed.");
+            return false;
         }
 
         public async Task Logout()

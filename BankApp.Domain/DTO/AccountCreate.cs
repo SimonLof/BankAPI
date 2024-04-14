@@ -10,6 +10,23 @@ namespace BankApp.Domain.DTO
         // OWNER if main account. DISPONENT if extra added account.
         public string DispositionType { get; set; } = null!;
         public AccountTypeEnum? AccountTypesId { get; set; }
+
+        public static AccountCreate AccountCreateFactory(AccountCreateCustomer accountCreateModel, int customerID)
+        {
+            return new AccountCreate
+            {
+                CustomerId = customerID,
+                AccountTypesId =
+                                accountCreateModel.AccountType is "t" or "T" ?
+                                    AccountTypeEnum.StandardTransactionAccount :
+                                    accountCreateModel.AccountType is "s" or "S" ?
+                                        AccountTypeEnum.SavingsAccount :
+                                            throw new Exception("Invalid account type"),
+                Balance = 0,
+                DispositionType = "DISPONENT",
+                Frequency = accountCreateModel.Frequency,
+            };
+        }
     }
 }
 

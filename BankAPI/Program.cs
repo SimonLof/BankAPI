@@ -58,6 +58,8 @@ var app = builder.Build();
 
 app.UseSwaggerExtensions();
 
+app.UserErrorHandlerExtensions();
+
 app.UseRouting();
 
 app.UseAuthentication();

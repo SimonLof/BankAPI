@@ -53,7 +53,6 @@ namespace BankApp.Data.Repos
             var accountList = await _context.Dispositions
                 .Where(d => d.CustomerId == customerId)
                 .Select(d => d.Account).ToListAsync();
-            if (accountList.Count == 0) { return new List<Account>(); }
 
             return accountList;
         }

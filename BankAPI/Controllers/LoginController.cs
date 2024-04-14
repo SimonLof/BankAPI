@@ -21,11 +21,12 @@ namespace BankApp.API.Controllers
             try
             {
                 if (userLogin is null)
-                    return BadRequest();
+                    return BadRequest(new { Error = "Login object required." });
 
-                await _loginService.Login(userLogin);
+                if (await _loginService.Login(userLogin))
+                    return Ok("You are logged in!");
 
-                return Ok("You are logged in!");
+                return BadRequest(new { Error = "Login failed." });
             }
             catch (Exception e)
             {

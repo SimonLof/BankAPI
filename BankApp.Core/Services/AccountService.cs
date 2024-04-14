@@ -6,7 +6,6 @@ using BankApp.Domain.DTO;
 using BankApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BankApp.Core.Services
 {
@@ -38,42 +37,24 @@ namespace BankApp.Core.Services
 
         public async Task UserCreateAccount(AccountCreateCustomer accountCreateModel, string username)
         {
-            if (username.IsNullOrEmpty()) throw new Exception("Invalid username.");
-
-            var user = await _userManager.Users
-                   .Include(a => a.Customer)
-                   .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper())
-                   ?? throw new Exception("User not found.");
-
-            var newCustomerCreatedAccount = new AccountCreate
-            {
-                CustomerId = user.Customer.CustomerId,
-                AccountTypesId =
-                    accountCreateModel.AccountType is 't' or 'T' ?
-                        AccountTypeEnum.StandardTransactionAccount :
-                        accountCreateModel.AccountType is 's' or 'S' ?
-                            AccountTypeEnum.SavingsAccount :
-                                throw new Exception("Invalid account type"),
-                Balance = 0,
-                DispositionType = "DISPONENT",
-                Frequency = accountCreateModel.Frequency,
-            };
+            var user = await GetUserFromUsername(username, false);
+            var newCustomerCreatedAccount =
+                AccountCreate.AccountCreateFactory(accountCreateModel, user.Customer.CustomerId);
             await CreateAccount(newCustomerCreatedAccount);
         }
 
+
+
         public async Task<List<AccountSimpleView>> GetAccountsFromName(string username)
         {
-            var user = await _userManager.Users
-                .Include(a => a.Customer)
-                .ThenInclude(c => c.Dispositions)
-                .ThenInclude(d => d.Account)
-                .FirstOrDefaultAsync(a => a.UserName == username) ??
-                throw new Exception("Username not found.");
+            var user = await GetUserFromUsername(username, true);
 
             if (user.Customer is null) throw new Exception("User is not a customer.");
 
             var customerAccounts = user.Customer.Dispositions.Select(d => d.Account).ToList();
+
             List<AccountSimpleView> returnAccounts = [];
+
             foreach (var account in customerAccounts)
                 returnAccounts.Add(_mapper.Map<AccountSimpleView>(account));
 
@@ -85,13 +66,9 @@ namespace BankApp.Core.Services
             return await _accountRepo.GetAccount(id);
         }
 
-        public async Task<AccountDetailedView> CustomerGetAcountWithTransactions(int id, string username)
+        public async Task<AccountDetailedView> CustomerGetAccountWithTransactions(int id, string username)
         {
-            var user = await _userManager.Users
-                        .Include(a => a.Customer)
-                        .ThenInclude(c => c.Dispositions)
-                        .ThenInclude(d => d.Account)
-                        .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper());
+            var user = await GetUserFromUsername(username, true);
             var userAccountIds = user.Customer.Dispositions.Select(d => d.Account)
                                                             .Select(a => a.AccountId).ToList();
 
@@ -100,30 +77,28 @@ namespace BankApp.Core.Services
             var account = await _accountRepo.GetAccountWithTransactions(id);
             return _mapper.Map<AccountDetailedView>(account);
         }
+
+        private async Task<ApplicationUser?> GetUserFromUsername(string username, bool bigInclude)
+        {
+            ApplicationUser user;
+            if (bigInclude)
+            {
+                user = await _userManager.Users
+                                        .Include(a => a.Customer)
+                                        .ThenInclude(c => c.Dispositions)
+                                        .ThenInclude(d => d.Account)
+                                        .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper())
+                                        ?? throw new Exception("User not found");
+            }
+            else
+            {
+                user = await _userManager.Users
+                   .Include(a => a.Customer)
+                   .FirstOrDefaultAsync(a => a.NormalizedUserName == username.ToUpper())
+                   ?? throw new Exception("User not found.");
+            }
+
+            return user;
+        }
     }
 }
-
-//// saker för att veta wtf is going on.
-// required account stuff
-//public int AccountId { get; set; }
-//public string Frequency { get; set; } = null!;
-//public DateOnly Created { get; set; }
-//public decimal Balance { get; set; }
-
-// createmodel stuff
-// Frequency can be monthly or weekly.
-//public string Frequency { get; set; } = null!;
-//public decimal Balance { get; set; }
-//public int CustomerId { get; set; }
-//// OWNER if main account. DISPONENT if extra added account.
-//public string DispositionType { get; set; } = null!;
-//public int? AccountTypesId { get; set; }
-
-// hela disposition
-//public int DispositionId { get; set; }
-//public int CustomerId { get; set; }
-//public int AccountId { get; set; }
-//public string Type { get; set; } = null!;
-//public virtual Account Account { get; set; } = null!;
-//public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-//public virtual Customer Customer { get; set; } = null!;

@@ -36,8 +36,15 @@ namespace BankApp.API.Controllers
         [HttpGet("myaccounts")]
         public async Task<IActionResult> ShowMyAccounts()
         {
-            var result = await _accountService.GetAccountsFromName(User.Identity.Name);
-            return Ok(result);
+            try
+            {
+                var result = await _accountService.GetAccountsFromName(User.Identity.Name);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { Error = e.Message });
+            }
         }
 
         [HttpGet("account/{id}")]
@@ -45,7 +52,7 @@ namespace BankApp.API.Controllers
         {
             try
             {
-                var result = await _accountService.CustomerGetAcountWithTransactions(id, User.Identity.Name);
+                var result = await _accountService.CustomerGetAccountWithTransactions(id, User.Identity.Name);
                 return Ok(result);
             }
             catch (Exception e)
