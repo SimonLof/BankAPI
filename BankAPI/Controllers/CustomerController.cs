@@ -20,11 +20,11 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("newaccount")]
-        public async Task<IActionResult> OpenNewAccount(AccountCreateCustomer newAccount)
+        public async Task<IActionResult> OpenNewAccount(AccountCreateByCustomer newAccount)
         {
             try
             {
-                await _accountService.UserCreateAccount(newAccount, User.Identity.Name);
+                await _accountService.AccountCreateByCustomer(newAccount, User.Identity.Name);
                 return Ok("Account created.");
             }
             catch (Exception e)

@@ -35,7 +35,7 @@ namespace BankApp.Core.Services
             await _accountRepo.CreateDisposition(newAccountDisposition);
         }
 
-        public async Task UserCreateAccount(AccountCreateCustomer accountCreateModel, string username)
+        public async Task AccountCreateByCustomer(AccountCreateByCustomer accountCreateModel, string username)
         {
             var user = await GetUserFromUsername(username, false);
             var newCustomerCreatedAccount =

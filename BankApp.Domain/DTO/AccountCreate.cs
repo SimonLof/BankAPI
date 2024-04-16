@@ -11,7 +11,7 @@ namespace BankApp.Domain.DTO
         public string DispositionType { get; set; } = null!;
         public AccountTypeEnum? AccountTypesId { get; set; }
 
-        public static AccountCreate AccountCreateFactory(AccountCreateCustomer accountCreateModel, int customerID)
+        public static AccountCreate AccountCreateFactory(AccountCreateByCustomer accountCreateModel, int customerID)
         {
             return new AccountCreate
             {
