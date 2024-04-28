@@ -8,7 +8,7 @@ namespace BankApp.Domain.Profiles
     {
         public DispositionProfile()
         {
-            CreateMap<AccountCreate, Disposition>()
+            CreateMap<AccountCreateDTO, Disposition>()
                 .ForMember(dest => dest.Type, opt =>
                 opt.MapFrom(src => src.DispositionType));
         }

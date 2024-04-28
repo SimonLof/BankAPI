@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Domain.DTO
 {
-    public class LoanView
+    public class LoanViewDTO
     {
         public int LoanId { get; set; }
         public int AccountId { get; set; }

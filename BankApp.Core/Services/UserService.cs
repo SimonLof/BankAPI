@@ -23,8 +23,12 @@ namespace BankApp.Core.Services
             _accountService = accountService;
         }
 
-        public async Task<IdentityResult> CreateCustomer(UserCreate user)
+        public async Task<IdentityResult> CreateCustomer(UserCreateDTO user)
         {
+            if (user.CountryCode.Length > 2) throw new Exception("CountryCode must be 2 characters");
+            if (user.Gender.Length > 6) throw new Exception("Gender must be 6 or lower amount of characters.");
+            if (user.Zipcode.Length > 15) throw new Exception("Zipcode must be 15 or lower amount of characters.");
+
             var result = await _userManager.CreateAsync(new ApplicationUser
             {
                 UserName = user.UserName,
@@ -48,7 +52,7 @@ namespace BankApp.Core.Services
 
                 if (updateResult.Succeeded)
                 {
-                    var newAccount = new AccountCreate
+                    var newAccount = new AccountCreateDTO
                     {
                         AccountTypesId = AccountTypeEnum.StandardTransactionAccount,
                         Balance = 0,
@@ -69,7 +73,7 @@ namespace BankApp.Core.Services
             throw new Exception(result.Errors.First().Description);
         }
 
-        public async Task<IdentityResult> CreateAdmin(UserCreate user)
+        public async Task<IdentityResult> CreateAdmin(UserCreateDTO user)
         {
             var result = await _userManager.CreateAsync(new ApplicationUser
             {

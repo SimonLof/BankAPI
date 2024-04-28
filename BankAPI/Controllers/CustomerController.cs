@@ -20,7 +20,7 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("newaccount")]
-        public async Task<IActionResult> OpenNewAccount(AccountCreateByCustomer newAccount)
+        public async Task<IActionResult> OpenNewAccount(AccountCreateByCustomerDTO newAccount)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("depositOrWithdraw")]
-        public async Task<IActionResult> MakeTransaction(TransactionCreate transaction)
+        public async Task<IActionResult> MakeTransaction(TransactionCreateDTO transaction)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("transfer")]
-        public async Task<IActionResult> TransferMoney(TransactionBetweenAccountsCreate transaction)
+        public async Task<IActionResult> TransferMoney(TransactionBetweenAccountsCreateDTO transaction)
         {
             try
             {

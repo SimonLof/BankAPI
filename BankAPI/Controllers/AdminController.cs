@@ -68,7 +68,7 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost("newloan")]
-        public async Task<IActionResult> NewLoan(LoanCreate loan)
+        public async Task<IActionResult> NewLoan(LoanCreateDTO loan)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace BankApp.API.Controllers
 
 
         [HttpPost("newcustomer")]
-        public async Task<IActionResult> CreateCustomer(UserCreate newUser)
+        public async Task<IActionResult> CreateCustomer(UserCreateDTO newUser)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace BankApp.API.Controllers
                 var result = await _userService.CreateCustomer(newUser);
 
                 if (result.Succeeded)
-                    return Ok();
+                    return Ok("Customer created.");
 
                 return BadRequest(new { Error = result.Errors.First().Description });
             }
@@ -118,7 +118,7 @@ namespace BankApp.API.Controllers
         }
         [AllowAnonymous]
         [HttpPost("createadmin")]
-        public async Task<IActionResult> CreateAdmin(UserCreate newAdmin)
+        public async Task<IActionResult> CreateAdmin(UserCreateDTO newAdmin)
         {
             try
             {

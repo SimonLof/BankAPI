@@ -22,7 +22,7 @@ namespace BankApp.Core.Services
             _userManager = userManager;
         }
 
-        public async Task CreateAccount(AccountCreate accountCreateModel)
+        public async Task CreateAccount(AccountCreateDTO accountCreateModel)
         {
             var newAccount = _mapper.Map<Account>(accountCreateModel);
             newAccount.Created = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -35,17 +35,16 @@ namespace BankApp.Core.Services
             await _accountRepo.CreateDisposition(newAccountDisposition);
         }
 
-        public async Task AccountCreateByCustomer(AccountCreateByCustomer accountCreateModel, string username)
+        public async Task AccountCreateByCustomer(AccountCreateByCustomerDTO accountCreateModel, string username)
         {
             var user = await GetUserFromUsername(username, false);
             var newCustomerCreatedAccount =
-                AccountCreate.AccountCreateFactory(accountCreateModel, user.Customer.CustomerId);
+                AccountCreateDTO.AccountCreateFactory(accountCreateModel, user.Customer.CustomerId);
             await CreateAccount(newCustomerCreatedAccount);
         }
 
 
-
-        public async Task<List<AccountSimpleView>> GetAccountsFromName(string username)
+        public async Task<List<AccountSimpleViewDTO>> GetAccountsFromName(string username)
         {
             var user = await GetUserFromUsername(username, true);
 
@@ -53,10 +52,10 @@ namespace BankApp.Core.Services
 
             var customerAccounts = user.Customer.Dispositions.Select(d => d.Account).ToList();
 
-            List<AccountSimpleView> returnAccounts = [];
+            List<AccountSimpleViewDTO> returnAccounts = [];
 
             foreach (var account in customerAccounts)
-                returnAccounts.Add(_mapper.Map<AccountSimpleView>(account));
+                returnAccounts.Add(_mapper.Map<AccountSimpleViewDTO>(account));
 
             return returnAccounts;
         }
@@ -66,7 +65,7 @@ namespace BankApp.Core.Services
             return await _accountRepo.GetAccount(id);
         }
 
-        public async Task<AccountDetailedView> CustomerGetAccountWithTransactions(int id, string username)
+        public async Task<AccountDetailedViewDTO> CustomerGetAccountWithTransactions(int id, string username)
         {
             var user = await GetUserFromUsername(username, true);
             var userAccountIds = user.Customer.Dispositions.Select(d => d.Account)
@@ -75,7 +74,7 @@ namespace BankApp.Core.Services
             if (!userAccountIds.Contains(id)) throw new Exception("Invalid account.");
 
             var account = await _accountRepo.GetAccountWithTransactions(id);
-            return _mapper.Map<AccountDetailedView>(account);
+            return _mapper.Map<AccountDetailedViewDTO>(account);
         }
 
         private async Task<ApplicationUser?> GetUserFromUsername(string username, bool bigInclude)

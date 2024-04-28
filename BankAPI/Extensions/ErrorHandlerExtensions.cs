@@ -16,7 +16,7 @@ namespace BankApp.API.Extensions
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature is not null)
                     {
-                        // logga alla errors till en riktig log.
+                        // logga alla uncaught errors till en log.
                         Console.WriteLine($"Error: {contextFeature.Error}");
 
                         await context.Response.WriteAsJsonAsync(new

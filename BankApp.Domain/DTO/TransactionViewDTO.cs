@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Domain.DTO
 {
-    public class TransactionView
+    public class TransactionViewDTO
     {
         public int TransactionId { get; set; }
         public DateOnly Date { get; set; }

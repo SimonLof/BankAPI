@@ -26,17 +26,17 @@ namespace BankApp.Core.Services
             _userManager = userManager;
         }
 
-        public async Task<TransactionView> SingleTransaction(TransactionCreate transaction)
+        public async Task<TransactionViewDTO> SingleTransaction(TransactionCreateDTO transaction)
         {
             Transaction newTransaction = await MakeNewTransaction(transaction);
 
             var createdTransaction = await _transactionRepo.CreateTransaction(newTransaction);
 
-            return _mapper.Map<TransactionView>(createdTransaction);
+            return _mapper.Map<TransactionViewDTO>(createdTransaction);
         }
 
 
-        public async Task<TransactionView> CustomerSingleTransaction(TransactionCreate transaction, string username)
+        public async Task<TransactionViewDTO> CustomerSingleTransaction(TransactionCreateDTO transaction, string username)
         {
             if (!await IsOwner(username, transaction.AccountId))
                 throw new Exception("Invalid account.");
@@ -44,23 +44,23 @@ namespace BankApp.Core.Services
             return await SingleTransaction(transaction);
         }
 
-        public async Task<TransactionView> TransferTransaction(TransactionBetweenAccountsCreate transaction, string username)
+        public async Task<TransactionViewDTO> TransferTransaction(TransactionBetweenAccountsCreateDTO transaction, string username)
         {
             string validationResult = await ValidateTransaction(transaction, username);
             if (validationResult != "") throw new Exception(validationResult);
 
             var fromAccountTransaction =
-                TransactionCreate.TransactionCreateFactory(transaction.FromAccountId, -transaction.Amount);
+                TransactionCreateDTO.TransactionCreateFactory(transaction.FromAccountId, -transaction.Amount);
 
             var toAccountTransaction =
-                TransactionCreate.TransactionCreateFactory(transaction.ToAccountId, transaction.Amount);
+                TransactionCreateDTO.TransactionCreateFactory(transaction.ToAccountId, transaction.Amount);
 
             var returnView = await SingleTransaction(fromAccountTransaction);
             await SingleTransaction(toAccountTransaction);
 
             return returnView;
         }
-        private async Task<Transaction> MakeNewTransaction(TransactionCreate transaction)
+        private async Task<Transaction> MakeNewTransaction(TransactionCreateDTO transaction)
         {
             var newTransaction = _mapper.Map<Transaction>(transaction);
 
@@ -76,7 +76,7 @@ namespace BankApp.Core.Services
             return newTransaction;
         }
 
-        private async Task<string> ValidateTransaction(TransactionBetweenAccountsCreate transaction, string username)
+        private async Task<string> ValidateTransaction(TransactionBetweenAccountsCreateDTO transaction, string username)
         {
             // kanske göra en enum här istället.
             string validationResult = "";

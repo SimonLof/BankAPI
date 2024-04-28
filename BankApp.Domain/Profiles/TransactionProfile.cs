@@ -8,9 +8,9 @@ namespace BankApp.Domain.Profiles
     {
         public TransactionProfile()
         {
-            CreateMap<Transaction, TransactionView>();
+            CreateMap<Transaction, TransactionViewDTO>();
 
-            CreateMap<TransactionCreate, Transaction>();
+            CreateMap<TransactionCreateDTO, Transaction>();
         }
     }
 }

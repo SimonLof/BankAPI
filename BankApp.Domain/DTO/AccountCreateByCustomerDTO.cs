@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Domain.DTO
 {
-    public class AccountCreateByCustomer
+    public class AccountCreateByCustomerDTO
     {
         // frequency of payments for loans. (weekly/monthly)
         public string Frequency { get; set; } = null!;

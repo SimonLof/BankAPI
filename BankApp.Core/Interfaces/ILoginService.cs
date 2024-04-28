@@ -4,7 +4,7 @@ namespace BankApp.Core.Interfaces
 {
     public interface ILoginService
     {
-        Task<bool> Login(UserLogin userLogin);
+        Task<bool> Login(UserLoginDTO userLogin);
         Task Logout();
     }
 }

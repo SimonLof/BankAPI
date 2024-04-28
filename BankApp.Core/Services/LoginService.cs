@@ -14,7 +14,7 @@ namespace BankApp.Core.Services
             _signInManager = signInManager;
         }
 
-        public async Task<bool> Login(UserLogin loginDTO)
+        public async Task<bool> Login(UserLoginDTO loginDTO)
         {
             var result = await _signInManager
                 .PasswordSignInAsync(loginDTO.UserName, loginDTO.Password, false, false);

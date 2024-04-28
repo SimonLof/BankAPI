@@ -16,7 +16,7 @@ namespace BankApp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(UserLogin userLogin)
+        public async Task<IActionResult> Login(UserLoginDTO userLogin)
         {
             try
             {

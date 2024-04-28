@@ -4,8 +4,8 @@ namespace BankApp.Core.Interfaces
 {
     public interface ITransactionService
     {
-        Task<TransactionView> CustomerSingleTransaction(TransactionCreate transaction, string username);
-        Task<TransactionView> SingleTransaction(TransactionCreate transaction);
-        Task<TransactionView> TransferTransaction(TransactionBetweenAccountsCreate transaction, string username);
+        Task<TransactionViewDTO> CustomerSingleTransaction(TransactionCreateDTO transaction, string username);
+        Task<TransactionViewDTO> SingleTransaction(TransactionCreateDTO transaction);
+        Task<TransactionViewDTO> TransferTransaction(TransactionBetweenAccountsCreateDTO transaction, string username);
     }
 }

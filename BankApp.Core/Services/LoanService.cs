@@ -21,7 +21,7 @@ namespace BankApp.Core.Services
             _transactionService = transactionService;
         }
 
-        public async Task<object> CreateNewLoan(LoanCreate newLoan)
+        public async Task<object> CreateNewLoan(LoanCreateDTO newLoan)
         {
             var loan = _mapper.Map<Loan>(newLoan);
 
@@ -29,14 +29,14 @@ namespace BankApp.Core.Services
             loan.Payments = loan.Amount / loan.Duration;
             loan.Status = "Running";
             loan.Account = await _accountService.GetAccountFromId(loan.AccountId);
-            var transactionView = await _transactionService.SingleTransaction(new TransactionCreate
+            var transactionView = await _transactionService.SingleTransaction(new TransactionCreateDTO
             {
                 Amount = newLoan.Amount,
                 AccountId = loan.AccountId,
             });
 
             var createdLoan = await _loanRepo.CreateLoan(loan);
-            var loanView = _mapper.Map<LoanView>(createdLoan);
+            var loanView = _mapper.Map<LoanViewDTO>(createdLoan);
             return new { Loan = loanView, Transaction = transactionView };
         }
 

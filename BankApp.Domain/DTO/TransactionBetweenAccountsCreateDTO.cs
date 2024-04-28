@@ -1,6 +1,6 @@
 ﻿namespace BankApp.Domain.DTO
 {
-    public class TransactionBetweenAccountsCreate
+    public class TransactionBetweenAccountsCreateDTO
     {
         public int FromAccountId { get; set; }
         public int ToAccountId { get; set; }

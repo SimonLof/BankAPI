@@ -8,9 +8,9 @@ namespace BankApp.Domain.Profiles
     {
         public LoanProfile()
         {
-            CreateMap<Loan, LoanView>();
+            CreateMap<Loan, LoanViewDTO>();
 
-            CreateMap<LoanCreate, Loan>();
+            CreateMap<LoanCreateDTO, Loan>();
         }
     }
 }
